@@ -1,19 +1,23 @@
-## Foundry
+# Vault
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Overview
 
-Foundry consists of:
+Tokenized Vaults with API is a yield-bearing smart contract that automatically invests user deposits into DeFi protocols like Aave and Compound. The vault dynamically reallocates funds based on the best available yields to maximize returns. Users receive tokenized vault shares representing their deposits, ensuring transparency and efficiency.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Goal
 
-## Documentation
+The goal is to create an automated and optimized yield aggregator that allows users to seamlessly deposit funds and earn interest without manually managing their allocations. This project enhances DeFi accessibility by reducing complexity for users while ensuring optimal yield generation.
 
-https://book.getfoundry.sh/
+### Features
+- Supports dynamic rebalancing between protocols to handle changing interest rates.
+- Ensures security & efficiency by implementing upgradeable smart contracts.
+- Future enhancements may include multi-asset support and emergency withdrawal mechanisms for risk mitigation.
+- Future enhancements may support drop in UI for interactions.
 
-## Usage
+## Resources
+
+https://book.getfoundry.sh
+
 
 ### Build
 
@@ -64,3 +68,14 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+## Contributors
+This project is part of the [Advanced Solidity Bootcamp](https://www.encode.club/advanced-solidity-bootcamp) organized by the Encode club.
+
+- [Riccardo](https://github.com/riccardo-ssvlabs)
+- [Paul](https://github.com/paulneup97)
+- [Peterson](https://github.com/svenski123)
+
+
+## Acknowledgments
+Special thanks to the [Advanced Solidity Bootcamp](https://www.encode.club/advanced-solidity-bootcamp) team for organizing this event and providing us with the opportunity to learn and contribute to the Defi space.
