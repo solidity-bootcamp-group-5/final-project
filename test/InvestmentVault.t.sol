@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {InvestmentVault} from "src/InvestmentVault.sol";
 
@@ -15,13 +16,21 @@ contract InvestmnentVaultTest is Test {
     address USER1 = makeAddr("User1");
     address USER2 = makeAddr("User2");
 
+    IERC20 usdc; // Interface instance for USDC
+
+    address usdcAddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48; // USDC contract address on Ethereum Mainnet
+
     uint256 constant INITIAL_USER1_BALANCE_ETH = 20 ether;
     uint256 constant INITIAL_USER2_BALANCE_ETH = 10 ether;
+
+    uint256 mainnetFork;
 
     function setUp() public virtual {
         vm.label(OWNER, "Owner");
         vm.label(USER1, "User1");
         vm.label(USER2, "User2");
+
+        mainnetFork = vm.createFork("https://eth.llamarpc.com");
 
         vm.startPrank(OWNER);
         vault = new InvestmentVault(address(OWNER));
@@ -29,11 +38,18 @@ contract InvestmnentVaultTest is Test {
 
         vm.label(address(vault), "InvestmentVault");
 
+        usdc = IERC20(usdcAddress);
+
         vm.stopPrank();
     }
 
     function test_mint() public {
         vault.mint(USER1, 100);
         assertEq(vault.balanceOf(USER1), 100);
+    }
+
+    function test_usdc() public {
+        vm.selectFork(mainnetFork);
+        assertEq(usdc.balanceOf(USER1), 0);
     }
 }
