@@ -23,14 +23,6 @@ contract InvestmentVault is ERC4626 {
         aUsdc = IERC20(_aUsdc);
     }
 
-    function mint(address account, uint256 amount) external {
-        _mint(account, amount);
-    }
-
-    function burn(address account, uint256 amount) external {
-        _burn(account, amount);
-    }
-
     function deposit(uint256 assets, address receiver) public override returns (uint256) {
         uint256 maxAssets = maxDeposit(receiver);
         if (assets > maxAssets) {

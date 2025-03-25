@@ -49,14 +49,6 @@ contract InvestmnentVaultTest is Test {
         vm.label(address(vault), "InvestmentVault");
     }
 
-    function test_mint() public {
-        vm.selectFork(mainnetFork);
-
-        assertEq(vault.balanceOf(USER1), 0);
-        vault.mint(USER1, 100);
-        assertEq(vault.balanceOf(USER1), 100);
-    }
-
     function test_total() public view {
         assertEq(vault.totalSupply(), 0);
     }
