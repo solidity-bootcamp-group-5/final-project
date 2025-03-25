@@ -17,11 +17,11 @@ The goal is to create an automated and optimized yield aggregator that allows us
 ## Contributors
 This project is part of the [Advanced Solidity Bootcamp](https://www.encode.club/advanced-solidity-bootcamp) organized by the Encode club.
 
-- [Riccardo](https://github.com/riccardo-ssvlabs)
-- [Paul](https://github.com/paulneup97)
-- [Peterson](https://github.com/svenski123)
-- [Marcio Romao](https://github.com/SulfurPT)
-- [Ze Garçao](https://github.com/zeGarcao)
+- [Riccardo](https://github.com/riccardo-ssvlabs) - halWNS 
+- [Paul](https://github.com/paulneup97) - KRIiGG 
+- [Peterson](https://github.com/svenski123) - yhwNZA 
+- [Marcio Romao](https://github.com/SulfurPT) - wrHIRe 
+- [Ze Garçao](https://github.com/zeGarcao) - BNtTJj 
 
 
 ## Acknowledgments
