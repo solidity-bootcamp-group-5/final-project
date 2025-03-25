@@ -19,6 +19,7 @@ contract InvestmnentVaultTest is Test {
     IERC20 usdc; // Interface instance for USDC
 
     address usdcAddress = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48; // USDC contract address on Ethereum Mainnet
+    address usdcWhale = 0x37305B1cD40574E4C5Ce33f8e8306Be057fD7341;
 
     uint256 constant INITIAL_USER1_BALANCE_ETH = 20 ether;
     uint256 constant INITIAL_USER2_BALANCE_ETH = 10 ether;
@@ -39,8 +40,6 @@ contract InvestmnentVaultTest is Test {
         vm.startPrank(OWNER);
         vault = new InvestmentVault(address(usdc));
         vm.stopPrank();
-
-        vm.stopPrank();
     }
 
     function test_mint() public {
@@ -51,6 +50,13 @@ contract InvestmnentVaultTest is Test {
 
     function test_total() public view {
         assertEq(vault.totalSupply(), 0);
+    }
+
+    function test_deposit() public {
+        vm.selectFork(mainnetFork);
+        vm.prank(usdcWhale);
+        usdc.transfer(USER1, 1000);
+        assertEq(usdc.balanceOf(USER1), 1000);
     }
 
     function test_usdc() public {
