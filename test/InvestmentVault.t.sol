@@ -69,9 +69,11 @@ contract InvestmnentVaultTest is Test {
         vm.startPrank(USER1);
         usdc.approve(address(vault), 1000);
         assertEq(vm.activeFork(), mainnetFork);
+        assertEq(vault.balance(), 0);
         vault.deposit(10, USER1);
         assertEq(usdc.balanceOf(USER1), 990);
         assertEq(vault.balanceOf(USER1), 10);
+        // assertEq(vault.balance(), 10);
         vm.stopPrank();
     }
 
