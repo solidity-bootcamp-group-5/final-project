@@ -26,23 +26,33 @@ contract InvestmnentVaultTest is Test {
 
     uint256 mainnetFork;
 
+    string mainnetRpcUrl = vm.envString("MAINNET_RPC_URL");
+
     function setUp() public virtual {
         vm.label(OWNER, "Owner");
         vm.label(USER1, "User1");
         vm.label(USER2, "User2");
+        
 
-        mainnetFork = vm.createFork("https://eth.llamarpc.com");
+        vm.deal(usdcWhale, 1 ether);
+        vm.deal(USER1, 1 ether);
 
-        vm.label(address(vault), "InvestmentVault");
+        mainnetFork = vm.createFork(mainnetRpcUrl, 22122000);
+
+        vm.selectFork(mainnetFork);
 
         usdc = IERC20(usdcAddress);
 
         vm.startPrank(OWNER);
         vault = new InvestmentVault(address(usdc));
         vm.stopPrank();
+
+        vm.label(address(vault), "InvestmentVault");
     }
 
     function test_mint() public {
+                vm.selectFork(mainnetFork);
+
         assertEq(vault.balanceOf(USER1), 0);
         vault.mint(USER1, 100);
         assertEq(vault.balanceOf(USER1), 100);
@@ -57,6 +67,13 @@ contract InvestmnentVaultTest is Test {
         vm.prank(usdcWhale);
         usdc.transfer(USER1, 1000);
         assertEq(usdc.balanceOf(USER1), 1000);
+        vm.startPrank(USER1);
+        usdc.approve(address(vault), 1000);
+        assertEq(vm.activeFork(), mainnetFork);
+        vault.deposit(10, USER1);
+        assertEq(usdc.balanceOf(USER1), 990);
+        assertEq(vault.balanceOf(USER1), 10);
+        vm.stopPrank();
     }
 
     function test_usdc() public {
