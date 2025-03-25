@@ -30,12 +30,11 @@ contract InvestmnentVaultTest is Test {
         vm.label(OWNER, "Owner");
         vm.label(USER1, "User1");
         vm.label(USER2, "User2");
-        
 
         vm.deal(usdcWhale, 1 ether);
         vm.deal(USER1, 1 ether);
 
-        mainnetFork = vm.createFork("https://eth.llamarpc.com", 22122000);
+        mainnetFork = vm.createFork("https://eth.llamarpc.com", 22_122_000);
 
         vm.selectFork(mainnetFork);
 
@@ -49,7 +48,7 @@ contract InvestmnentVaultTest is Test {
     }
 
     function test_mint() public {
-                vm.selectFork(mainnetFork);
+        vm.selectFork(mainnetFork);
 
         assertEq(vault.balanceOf(USER1), 0);
         vault.mint(USER1, 100);
