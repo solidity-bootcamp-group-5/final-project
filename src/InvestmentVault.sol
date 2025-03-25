@@ -12,10 +12,15 @@ interface IAavePool {
 contract InvestmentVault is ERC4626 {
     IAavePool public immutable aavePool;
     IERC20 public immutable usdc;
+    IERC20 public immutable aUsdc;
 
-    constructor(address underlying, address _aavePool) ERC20("Investment Vault USDC", "VUSDC") ERC4626(IERC20(underlying)) {
+    constructor(address underlying, address _aavePool, address _aUsdc)
+        ERC20("Investment Vault USDC", "VUSDC")
+        ERC4626(IERC20(underlying))
+    {
         aavePool = IAavePool(_aavePool);
         usdc = IERC20(underlying);
+        aUsdc = IERC20(_aUsdc);
     }
 
     function mint(address account, uint256 amount) external {
@@ -39,5 +44,9 @@ contract InvestmentVault is ERC4626 {
         aavePool.supply(address(usdc), assets, address(this), 0);
 
         return shares;
+    }
+
+    function balance() public view returns (uint256) {
+        return aUsdc.balanceOf(address(this));
     }
 }
