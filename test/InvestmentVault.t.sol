@@ -26,8 +26,6 @@ contract InvestmnentVaultTest is Test {
 
     uint256 mainnetFork;
 
-    string mainnetRpcUrl = vm.envString("MAINNET_RPC_URL");
-
     function setUp() public virtual {
         vm.label(OWNER, "Owner");
         vm.label(USER1, "User1");
@@ -37,7 +35,7 @@ contract InvestmnentVaultTest is Test {
         vm.deal(usdcWhale, 1 ether);
         vm.deal(USER1, 1 ether);
 
-        mainnetFork = vm.createFork(mainnetRpcUrl, 22122000);
+        mainnetFork = vm.createFork("https://eth.llamarpc.com", 22122000);
 
         vm.selectFork(mainnetFork);
 
