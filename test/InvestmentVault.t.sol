@@ -32,20 +32,25 @@ contract InvestmnentVaultTest is Test {
 
         mainnetFork = vm.createFork("https://eth.llamarpc.com");
 
-        vm.startPrank(OWNER);
-        vault = new InvestmentVault(address(OWNER));
-        vm.stopPrank();
-
         vm.label(address(vault), "InvestmentVault");
 
         usdc = IERC20(usdcAddress);
+
+        vm.startPrank(OWNER);
+        vault = new InvestmentVault(address(usdc));
+        vm.stopPrank();
 
         vm.stopPrank();
     }
 
     function test_mint() public {
+        assertEq(vault.balanceOf(USER1), 0);
         vault.mint(USER1, 100);
         assertEq(vault.balanceOf(USER1), 100);
+    }
+
+    function test_total() public view {
+        assertEq(vault.totalSupply(), 0);
     }
 
     function test_usdc() public {

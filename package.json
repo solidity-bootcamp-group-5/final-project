@@ -1,12 +1,11 @@
 {
   "name": "final-project",
   "version": "1.0.0",
-  "description": "**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**",
-  "main": "index.js",
   "scripts": {
     "compile": "forge compile",
     "build": "forge fmt && forge clean && forge build",
-    "test": "forge test"  },
+    "test": "forge test" 
+  },
   "author": "Team 5",
   "license": "UNLICENSED"
 }

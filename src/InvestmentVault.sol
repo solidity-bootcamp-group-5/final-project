@@ -6,7 +6,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 
 contract InvestmentVault is ERC4626 {
-    constructor(address underlying) ERC20("InvestmentVault", "IV") ERC4626(IERC20(underlying)) {}
+    constructor(address underlying) ERC20("Investment Vault Token", "IVT") ERC4626(IERC20(underlying)) {}
 
     function mint(address account, uint256 amount) external {
         _mint(account, amount);
