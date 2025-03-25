@@ -7,6 +7,7 @@ import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.so
 
 interface IAavePool {
     function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
+    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
 }
 
 contract InvestmentVault is ERC4626 {
@@ -36,6 +37,25 @@ contract InvestmentVault is ERC4626 {
         aavePool.supply(address(usdc), assets, address(this), 0);
 
         return shares;
+    }
+
+    function redeem(uint256 shares, address receiver, address owner) public override returns (uint256) {
+        uint256 maxShares = maxRedeem(owner);
+        if (shares > maxShares) {
+            revert ERC4626ExceededMaxRedeem(owner, shares, maxShares);
+        }
+
+        uint256 assets = previewRedeem(shares);
+
+        aavePool.withdraw(address(usdc), assets, address(this));
+
+        _withdraw(_msgSender(), receiver, owner, assets, shares);
+
+        return assets;
+    }
+
+    function totalAssets() public view override returns (uint256) {
+        return aUsdc.balanceOf(address(this));
     }
 
     function balance() public view returns (uint256) {
