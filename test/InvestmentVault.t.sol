@@ -9,7 +9,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {InvestmentVault} from "src/InvestmentVault.sol";
 
-contract InvestmnentVaultTest is Test {
+contract InvestmentVaultTest is Test {
     InvestmentVault public vault;
 
     address OWNER = makeAddr("Owner");
@@ -22,6 +22,7 @@ contract InvestmnentVaultTest is Test {
     address usdcWhale = 0x37305B1cD40574E4C5Ce33f8e8306Be057fD7341;
     address aavePool = 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2;
     address aUSDC = 0x98C23E9d8f34FEFb1B7BD6a91B7FF122F4e16F5c;
+    address cUSDC = 0x39AA39c021dfbaE8faC545936693aC917d5E7563;
 
     uint256 constant INITIAL_USER1_BALANCE_ETH = 20 ether;
     uint256 constant INITIAL_USER2_BALANCE_ETH = 10 ether;
@@ -43,7 +44,7 @@ contract InvestmnentVaultTest is Test {
         usdc = IERC20(usdcAddress);
 
         vm.startPrank(OWNER);
-        vault = new InvestmentVault(address(usdc), aavePool, aUSDC);
+        vault = new InvestmentVault(address(usdc), aavePool, aUSDC, cUSDC);
         vm.stopPrank();
 
         vm.label(address(vault), "InvestmentVault");
@@ -63,16 +64,24 @@ contract InvestmnentVaultTest is Test {
         vm.startPrank(USER1);
         usdc.approve(address(vault), amount);
         assertEq(vm.activeFork(), mainnetFork);
-        assertEq(vault.balance(), 0);
+        assertEq(vault.balanceAave(), 0);
+        assertEq(vault.balanceCompound(), 0);
         vault.deposit(amount, USER1);
         assertEq(usdc.balanceOf(USER1), 0);
         assertEq(vault.balanceOf(USER1), amount);
-        assertEq(vault.balance(), amount);
+        assertEq(vault.balanceAave(), amount / 2);
+        assertEq(vault.balanceCompound(), 2018808063649);
         vm.stopPrank();
     }
 
     function test_usdc() public {
         vm.selectFork(mainnetFork);
         assertEq(usdc.balanceOf(USER1), 0);
+    }
+
+    function test_vaultBalance() public {
+        vm.selectFork(mainnetFork);
+        assertEq(vault.balanceAave(), 0);
+        assertEq(vault.balanceCompound(), 0);
     }
 }
