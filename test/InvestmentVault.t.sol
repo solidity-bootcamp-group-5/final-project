@@ -70,7 +70,7 @@ contract InvestmentVaultTest is Test {
         assertEq(usdc.balanceOf(USER1), 0);
         assertEq(vault.balanceOf(USER1), amount);
         assertEq(vault.balanceAave(), amount / 2);
-        assertEq(vault.balanceCompound(), 2018808063649);
+        assertEq(vault.balanceCompound(), 2_018_808_063_649);
         vm.stopPrank();
     }
 
