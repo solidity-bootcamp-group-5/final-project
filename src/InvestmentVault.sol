@@ -12,6 +12,7 @@ interface IAavePool {
     function withdraw(address asset, uint256 amount, address to) external returns (uint256);
 }
 
+// TODO CHANGE TO COMPOUND V3
 interface CErc20 {
     function mint(uint256) external returns (uint256);
 
@@ -51,11 +52,11 @@ contract InvestmentVault is ERC4626 {
         uint256 shares = previewDeposit(assets);
         _deposit(_msgSender(), receiver, assets, shares);
 
-        uint256 aaveAmount = assets / 2;
+        uint256 aaveAmount = assets >> 1;
         uint256 compoundAmount = assets - aaveAmount;
 
-        IERC20(usdc).approve(address(aavePool), assets);
-        IERC20(usdc).approve(address(cUsdc), assets);
+        IERC20(usdc).approve(address(aavePool), aaveAmount);
+        IERC20(usdc).approve(address(cUsdc), compoundAmount);
 
         aavePool.supply(address(usdc), aaveAmount, address(this), 0);
 
@@ -102,7 +103,7 @@ contract InvestmentVault is ERC4626 {
 
         uint256 shares = previewWithdraw(assets);
 
-        uint256 aaveAmount = assets / 2;
+        uint256 aaveAmount = assets >> 1;
         uint256 compoundAmount = assets - aaveAmount;
 
         aavePool.withdraw(address(usdc), aaveAmount, address(this));
@@ -114,7 +115,7 @@ contract InvestmentVault is ERC4626 {
     }
 
     function totalAssets() public view override returns (uint256) {
-        return aUsdc.balanceOf(address(this));
+        return balanceAave() + balanceCompound();
     }
 
     function balanceAave() public view returns (uint256) {

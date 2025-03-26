@@ -9,6 +9,12 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {InvestmentVault} from "src/InvestmentVault.sol";
 
+// NOTE INTERFACE FOR COMPOUND V3 - AT 0xc3d688B66703497DAA19211EEdff47f25384cdc3
+interface ICUsdc is IERC20 {
+    function supply(address asset, uint256 amount) external;
+    function withdraw(address asset, uint256 amount) external;
+}
+
 contract InvestmentVaultTest is Test {
     InvestmentVault public vault;
 
@@ -83,5 +89,23 @@ contract InvestmentVaultTest is Test {
         vm.selectFork(mainnetFork);
         assertEq(vault.balanceAave(), 0);
         assertEq(vault.balanceCompound(), 0);
+    }
+
+    // NOTE USE COMPOUND V3 INSTEAD
+    function test_CompoundV3() public {
+        ICUsdc cUsdcV3 = ICUsdc(0xc3d688B66703497DAA19211EEdff47f25384cdc3);
+        uint256 amount = 100e6;
+        deal(usdcAddress, USER1, amount, true);
+
+        vm.startPrank(USER1);
+        usdc.approve(address(cUsdcV3), amount);
+        cUsdcV3.supply(usdcAddress, amount);
+        vm.stopPrank();
+
+        console.log(cUsdcV3.balanceOf(USER1));
+
+        skip(180 days);
+
+        console.log(cUsdcV3.balanceOf(USER1));
     }
 }
