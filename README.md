@@ -19,7 +19,7 @@ This project is part of the [Advanced Solidity Bootcamp](https://www.encode.club
 
 - [Riccardo](https://github.com/riccardo-ssvlabs) - halWNS 
 - [Paul](https://github.com/paulneup97) - KRIiGG 
-- [Peterson](https://github.com/svenski123) - yhwNZA 
+- [Kris Peterson](https://github.com/svenski123) - yhwNZA
 - [Marcio Romao](https://github.com/SulfurPT) - wrHIRe 
 - [Ze Garçao](https://github.com/zeGarcao) - BNtTJj 
 
