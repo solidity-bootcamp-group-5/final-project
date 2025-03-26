@@ -6,11 +6,7 @@ import "forge-std/console.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
-
-interface IAavePool {
-    function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
-    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
-}
+import {IPool as IAavePool} from "aave-v3-origin/src/contracts/interfaces/IPool.sol";
 
 contract InvestmentVault is ERC4626 {
     IAavePool public immutable aavePool;
