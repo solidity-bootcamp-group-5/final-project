@@ -18,6 +18,8 @@ interface ICUsdc is IERC20 {
 }
 
 contract InvestmentVault is ERC4626 {
+    uint256 public constant MIN_DELTA = 50e6;
+
     IAavePool public immutable aavePool;
     IERC20 public immutable usdc;
     IERC20 public immutable aUsdc;
@@ -33,7 +35,12 @@ contract InvestmentVault is ERC4626 {
         cUsdc = ICUsdc(_cUsdc);
     }
 
-    function deposit(uint256 assets, address receiver) public override returns (uint256) {
+    modifier rebalance() {
+        _rebalance();
+        _;
+    }
+
+    function deposit(uint256 assets, address receiver) public override rebalance returns (uint256) {
         uint256 maxAssets = maxDeposit(receiver);
         if (assets > maxAssets) {
             revert ERC4626ExceededMaxDeposit(receiver, assets, maxAssets);
@@ -54,7 +61,7 @@ contract InvestmentVault is ERC4626 {
         return shares;
     }
 
-    function mint(uint256 shares, address receiver) public override returns (uint256) {
+    function mint(uint256 shares, address receiver) public override rebalance returns (uint256) {
         uint256 maxShares = maxMint(receiver);
         if (shares > maxShares) {
             revert ERC4626ExceededMaxMint(receiver, shares, maxShares);
@@ -75,7 +82,7 @@ contract InvestmentVault is ERC4626 {
         return assets;
     }
 
-    function redeem(uint256 shares, address receiver, address owner) public override returns (uint256) {
+    function redeem(uint256 shares, address receiver, address owner) public override rebalance returns (uint256) {
         uint256 maxShares = maxRedeem(owner);
         if (shares > maxShares) {
             revert ERC4626ExceededMaxRedeem(owner, shares, maxShares);
@@ -94,7 +101,7 @@ contract InvestmentVault is ERC4626 {
         return assets;
     }
 
-    function withdraw(uint256 assets, address receiver, address owner) public override returns (uint256) {
+    function withdraw(uint256 assets, address receiver, address owner) public override rebalance returns (uint256) {
         uint256 maxAssets = maxWithdraw(owner);
         if (assets > maxAssets) {
             revert ERC4626ExceededMaxWithdraw(owner, assets, maxAssets);
@@ -123,5 +130,29 @@ contract InvestmentVault is ERC4626 {
 
     function balanceCompound() public view returns (uint256) {
         return cUsdc.balanceOf(address(this));
+    }
+
+    function _rebalance() private {
+        uint256 aaveBalance = balanceAave();
+        uint256 compoundBalance = balanceCompound();
+        uint256 delta = aaveBalance > compoundBalance ? aaveBalance - compoundBalance : compoundBalance - aaveBalance;
+
+        if (delta < MIN_DELTA) return;
+
+        uint256 rebalanceAmount = delta >> 1;
+
+        if (aaveBalance > compoundBalance) {
+            // withdraw from aave
+            aavePool.withdraw(address(usdc), rebalanceAmount, address(this));
+            // supply to compound
+            IERC20(usdc).approve(address(cUsdc), rebalanceAmount);
+            cUsdc.supply(address(usdc), rebalanceAmount);
+        } else {
+            // withdraw from compound
+            cUsdc.withdraw(address(usdc), rebalanceAmount);
+            // supply to aave
+            IERC20(usdc).approve(address(aavePool), rebalanceAmount);
+            aavePool.supply(address(usdc), rebalanceAmount, address(this), 0);
+        }
     }
 }
