@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.28;
 
-import {InvestmnentVaultTest, console, IERC20} from "../InvestmentVault.t.sol";
+import {InvestmentVaultTest, console, IERC20} from "../InvestmentVault.t.sol";
 
-contract InvestmnentVaultTestZe is InvestmnentVaultTest {
+contract InvestmentVaultTestZe is InvestmentVaultTest {
     function test_DepositAndRedeem(uint256 amount1, uint256 amount2) public {
         deal(address(usdc), USER1, 1000e6, true);
         deal(address(usdc), USER2, 1000e6, true);
