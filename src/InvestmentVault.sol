@@ -12,26 +12,16 @@ interface IAavePool {
     function withdraw(address asset, uint256 amount, address to) external returns (uint256);
 }
 
-// TODO CHANGE TO COMPOUND V3
-interface CErc20 {
-    function mint(uint256) external returns (uint256);
-
-    function exchangeRateCurrent() external returns (uint256);
-
-    function supplyRatePerBlock() external returns (uint256);
-
-    function redeem(uint256) external returns (uint256);
-
-    function redeemUnderlying(uint256) external returns (uint256);
-
-    function balanceOf(address owner) external view returns (uint256 balance);
+interface ICUsdc is IERC20 {
+    function supply(address asset, uint256 amount) external;
+    function withdraw(address asset, uint256 amount) external;
 }
 
 contract InvestmentVault is ERC4626 {
     IAavePool public immutable aavePool;
     IERC20 public immutable usdc;
     IERC20 public immutable aUsdc;
-    CErc20 public immutable cUsdc;
+    ICUsdc public immutable cUsdc;
 
     constructor(address underlying, address _aavePool, address _aUsdc, address _cUsdc)
         ERC20("Investment Vault USDC", "VUSDC")
@@ -40,7 +30,7 @@ contract InvestmentVault is ERC4626 {
         aavePool = IAavePool(_aavePool);
         usdc = IERC20(underlying);
         aUsdc = IERC20(_aUsdc);
-        cUsdc = CErc20(_cUsdc);
+        cUsdc = ICUsdc(_cUsdc);
     }
 
     function deposit(uint256 assets, address receiver) public override returns (uint256) {
@@ -59,8 +49,7 @@ contract InvestmentVault is ERC4626 {
         IERC20(usdc).approve(address(cUsdc), compoundAmount);
 
         aavePool.supply(address(usdc), aaveAmount, address(this), 0);
-
-        cUsdc.mint(compoundAmount);
+        cUsdc.supply(address(usdc), compoundAmount);
 
         return shares;
     }
@@ -74,8 +63,14 @@ contract InvestmentVault is ERC4626 {
         uint256 assets = previewMint(shares);
         _deposit(_msgSender(), receiver, assets, shares);
 
-        IERC20(usdc).approve(address(aavePool), assets);
-        aavePool.supply(address(usdc), assets, address(this), 0);
+        uint256 aaveAmount = assets >> 1;
+        uint256 compoundAmount = assets - aaveAmount;
+
+        IERC20(usdc).approve(address(aavePool), aaveAmount);
+        IERC20(usdc).approve(address(cUsdc), compoundAmount);
+
+        aavePool.supply(address(usdc), aaveAmount, address(this), 0);
+        cUsdc.supply(address(usdc), compoundAmount);
 
         return assets;
     }
@@ -88,7 +83,11 @@ contract InvestmentVault is ERC4626 {
 
         uint256 assets = previewRedeem(shares);
 
-        aavePool.withdraw(address(usdc), assets, address(this));
+        uint256 aaveAmount = assets >> 1;
+        uint256 compoundAmount = assets - aaveAmount;
+
+        aavePool.withdraw(address(usdc), aaveAmount, address(this));
+        cUsdc.withdraw(address(usdc), compoundAmount);
 
         _withdraw(_msgSender(), receiver, owner, assets, shares);
 
@@ -107,7 +106,7 @@ contract InvestmentVault is ERC4626 {
         uint256 compoundAmount = assets - aaveAmount;
 
         aavePool.withdraw(address(usdc), aaveAmount, address(this));
-        cUsdc.redeemUnderlying(compoundAmount);
+        cUsdc.withdraw(address(usdc), compoundAmount);
 
         _withdraw(_msgSender(), receiver, owner, assets, shares);
 
